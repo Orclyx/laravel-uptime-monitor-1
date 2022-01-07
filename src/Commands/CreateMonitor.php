@@ -7,7 +7,7 @@ use Spatie\Url\Url;
 
 class CreateMonitor extends BaseCommand
 {
-    protected $signature = 'monitor:create {url}';
+    protected $signature = 'monitor:create {url} {--resolve=}';
 
     protected $description = 'Create a monitor';
 
@@ -31,6 +31,7 @@ class CreateMonitor extends BaseCommand
             'uptime_check_method' => isset($lookForString) ? 'get' : 'head',
             'certificate_check_enabled' => $url->getScheme() === 'https',
             'uptime_check_interval_in_minutes' => config('uptime-monitor.uptime_check.run_interval_in_minutes'),
+            'resolve' => $this->option('resolve'),
         ]);
 
         $this->warn("{$monitor->url} will be monitored!");

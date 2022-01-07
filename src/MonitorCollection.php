@@ -52,6 +52,7 @@ class MonitorCollection extends Collection
                 $monitor->url,
                 array_filter([
                     'connect_timeout' => config('uptime-monitor.uptime_check.timeout_per_site'),
+                    'curl' => $this->promiseCurlOptions($monitor),
                     'headers' => $this->promiseHeaders($monitor),
                     'body' => $monitor->uptime_check_payload,
                 ])
@@ -68,6 +69,19 @@ class MonitorCollection extends Collection
             ->merge(config('uptime-monitor.uptime_check.additional_headers') ?? [])
             ->merge($monitor->uptime_check_additional_headers)
             ->toArray();
+    }
+
+    private function promiseCurlOptions(Monitor $monitor): array
+    {
+        if (!isset($monitor->resolve)) {
+            return [];
+        }
+
+        return [
+            CURLOPT_RESOLVE => [
+                $monitor->resolve,
+            ],
+        ];
     }
 
     /**

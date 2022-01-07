@@ -100,4 +100,19 @@ class CheckUptimeCommandTest extends TestCase
         $this->assertEquals(UptimeStatus::DOWN, $monitor->uptime_status);
         $this->assertEquals(ResponseCheckerFailureFake::FAILURE_REASON, $monitor->uptime_check_failure_reason);
     }
+
+    /** @test */
+    public function it_can_check_monitor_with_resolve_option()
+    {
+        $monitor = factory(Monitor::class)->create([
+            'uptime_status' => UptimeStatus::NOT_YET_CHECKED,
+            'resolve' => sprintf('localhost:%d:%s', getenv('TEST_SERVER_PORT'), '::1'),
+        ]);
+
+        Artisan::call('monitor:check-uptime', ['--url' => $monitor->url]);
+
+        $monitor = $monitor->fresh();
+
+        $this->assertEquals(UptimeStatus::UP, $monitor->uptime_status);
+    }
 }

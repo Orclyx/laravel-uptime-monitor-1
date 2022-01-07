@@ -29,11 +29,17 @@ class UptimeMonitorServiceProvider extends ServiceProvider
             ], 'config');
         }
 
-        if (! class_exists('CreateMonitorsTable')) {
-            $timestamp = date('Y_m_d_His', time());
+        $timestamp = date('Y_m_d_His', time());
 
+        if (! class_exists('CreateMonitorsTable')) {
             $this->publishes([
                 __DIR__.'/../database/migrations/create_monitors_table.php.stub' => database_path('migrations/'.$timestamp.'_create_monitors_table.php'),
+            ], 'migrations');
+        }
+
+        if (! class_exists('AddResolveToMonitors')) {
+            $this->publishes([
+                __DIR__.'/../database/migrations/add_resolve_to_monitors.php.stub' => database_path('migrations/'.$timestamp.'_add_resolve_to_monitors.php'),
             ], 'migrations');
         }
     }

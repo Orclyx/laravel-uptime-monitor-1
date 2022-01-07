@@ -60,4 +60,20 @@ class MonitorCreateCommandTest extends TestCase
         $this->bringTestServerUp();
         $this->bringTestServerDown();
     }
+
+    /** @test */
+    public function it_can_create_a_monitor_with_resolve_option()
+    {
+        $this->command
+            ->shouldReceive('confirm')
+            ->once()
+            ->with('Should we look for a specific string on the response?')
+            ->andReturn('');
+
+        Artisan::call('monitor:create', ['url' => 'http://mysite.com', '--resolve' => 'mysite.com:80:127.0.0.1']);
+
+        $monitor = Monitor::where('url', 'http://mysite.com')->first();
+
+        $this->assertSame($monitor->resolve, 'mysite.com:80:127.0.0.1');
+    }
 }
